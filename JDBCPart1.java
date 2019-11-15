@@ -26,28 +26,34 @@ public class JDBCPart1{
     public static void main(String[] args) {
 
         try{
-            String create_table_branch = "CREATE TABLE branch ("
-                                        +"bnum char(3) primary key, "
-                                        +"address char(35), "
-                                        +"isactive char(1), "
-                                        + "CONSTRAINT check_isactive check (isactive in ('Y','N')), "
-                                        +"CONSTRAINT check_Bnum CHECK (TO_NUMBER(bnum) BETWEEN 0 and 999))";
+            String create_table_branch =    "CREATE TABLE branch ("
+                                            +"bnum char(3) primary key, "
+                                            +"address char(35), "
+                                            +"CONSTRAINT check_Bnum CHECK (TO_NUMBER(bnum) BETWEEN 0 and 999))";
+            
+            String create_table_closedBranch =  "CREATE TABLE closedbranch ("
+                                                +"bnum char(3) primary key, "
+                                                +"address char(35))";
             
             
-            String create_table_customer = "CREATE TABLE customer ("
-                                        +"cnum char(5), "
-                                        +"name char(20) primary key, "
-                                        +"status int, "
-                                        +"balance int, "
-                                        +"CONSTRAINT check_Status "
-                                        +"CHECK (status BETWEEN 0 and 3))";
+            String create_table_customer =  "CREATE TABLE customer ("
+                                            +"cnum char(5) primary key, "
+                                            +"name char(20), "
+                                            +"status int, "
+                                            +"CONSTRAINT check_Status "
+                                            +"CHECK (status BETWEEN 0 and 3))";
 
-            String create_table_account = "CREATE TABLE account ("
-                                        +"anum char(7) primary key, "
-                                        +"localnum char(4), "
-                                        +"bnum char(3), "
-                                        +"CONSTRAINT branch_num "
-                                        +"FOREIGN KEY (bnum) REFERENCES branch(bnum))";
+            String create_table_account =   "CREATE TABLE account ("
+                                            +"anum char(7) primary key, "
+                                            +"cnum char(5), "
+                                            +"balance number, "
+                                            +"CONSTRAINT check_balance "
+                                            +"CHECK (balance >= 0 ), "
+                                            +"CONSTRAINT customer_num "
+                                            +"FOREIGN KEY (cnum) REFERENCES customer(cnum))";
+            
+            String create_table_closed_account =   "CREATE TABLE closedaccount ("
+                                            +"anum char(7) primary key)";
 
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             
@@ -76,6 +82,14 @@ public class JDBCPart1{
                 stmt.executeUpdate(sql);
                 System.out.println("Account table dropped.\n");
 
+                sql = "DROP TABLE closedbranch CASCADE CONSTRAINTS";
+                stmt.executeUpdate(sql);
+                System.out.println("Closed Branch table dropped.\n");
+
+                sql = "DROP TABLE closedaccount CASCADE CONSTRAINTS";
+                stmt.executeUpdate(sql);
+                System.out.println("Closed Account table dropped.\n");
+
             }catch(Exception e){
                 System.out.println("SQL exception: ");
                 e.printStackTrace();
@@ -85,10 +99,18 @@ public class JDBCPart1{
             
             stmt.executeUpdate(create_table_branch);
             System.out.println("Branch table created.\n");
+            
             stmt.executeUpdate(create_table_customer);
             System.out.println("Customer table created.\n");
+            
             stmt.executeUpdate(create_table_account);
             System.out.println("Account table created.\n");
+
+            stmt.executeUpdate(create_table_closedBranch);
+            System.out.println("Closed Branch table created.\n");
+
+            stmt.executeUpdate(create_table_closed_account);
+            System.out.println("Closed account table created.\n");
         }
         catch(Exception e){
             System.out.println("SQL exception: ");
