@@ -42,6 +42,9 @@ public class JDBCPart1{
                                             +"status int, "
                                             +"CONSTRAINT check_Status "
                                             +"CHECK (status BETWEEN 0 and 3))";
+            
+            String create_table_closedCustomer =    "CREATE TABLE closedcustomer ("
+                                                    +"cnum char(5) primary key)";
 
             String create_table_account =   "CREATE TABLE account ("
                                             +"anum char(7) primary key, "
@@ -71,24 +74,28 @@ public class JDBCPart1{
 
             try{
                 String sql = "DROP TABLE branch CASCADE CONSTRAINTS";
-                stmt.executeUpdate(sql);
-                System.out.println("Branch table dropped.\n");
+                // stmt.executeUpdate(sql);
+                // System.out.println("branch table dropped.\n");
 
                 sql = "DROP TABLE customer CASCADE CONSTRAINTS";
                 stmt.executeUpdate(sql);
-                System.out.println("Customer table dropped.\n");
+                System.out.println("customer table dropped.\n");
 
                 sql = "DROP TABLE account CASCADE CONSTRAINTS";
                 stmt.executeUpdate(sql);
-                System.out.println("Account table dropped.\n");
+                System.out.println("account table dropped.\n");
 
                 sql = "DROP TABLE closedbranch CASCADE CONSTRAINTS";
                 stmt.executeUpdate(sql);
-                System.out.println("Closed Branch table dropped.\n");
+                System.out.println("closedbranch table dropped.\n");
 
                 sql = "DROP TABLE closedaccount CASCADE CONSTRAINTS";
                 stmt.executeUpdate(sql);
-                System.out.println("Closed Account table dropped.\n");
+                System.out.println("closedaccount table dropped.\n");
+
+                sql = "DROP TABLE closedcustomer CASCADE CONSTRAINTS";
+                stmt.executeUpdate(sql);
+                System.out.println("closedcustomer table dropped.\n");
 
             }catch(Exception e){
                 System.out.println("SQL exception: ");
@@ -97,20 +104,23 @@ public class JDBCPart1{
 
             System.out.println("********************************************************.\n");
             
-            stmt.executeUpdate(create_table_branch);
-            System.out.println("Branch table created.\n");
+            // stmt.executeUpdate(create_table_branch);
+            // System.out.println("branch table created.\n");
             
             stmt.executeUpdate(create_table_customer);
-            System.out.println("Customer table created.\n");
+            System.out.println("customer table created.\n");
             
             stmt.executeUpdate(create_table_account);
-            System.out.println("Account table created.\n");
+            System.out.println("account table created.\n");
 
             stmt.executeUpdate(create_table_closedBranch);
-            System.out.println("Closed Branch table created.\n");
+            System.out.println("closedbranch table created.\n");
 
             stmt.executeUpdate(create_table_closed_account);
-            System.out.println("Closed account table created.\n");
+            System.out.println("closedaccount table created.\n");
+
+            stmt.executeUpdate(create_table_closedCustomer);
+            System.out.println("closedcustomer table created.\n");
         }
         catch(Exception e){
             System.out.println("SQL exception: ");

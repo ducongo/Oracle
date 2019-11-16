@@ -105,12 +105,9 @@ public class JDBCPart2{
                         System.out.println("Exiting program...");
                         break loop;
                     case 1:
-                        System.out.println("You entered " + option);
                         open_branch("String address");
                         break;
                     case 2:
-                        System.out.println("You entered " + option);
-
                         int case2NestedOption = -1;
 
                         System.out.println("Do you want to close a branch using (1) branch number ot (2) branch address?:");
@@ -131,7 +128,7 @@ public class JDBCPart2{
                                     }
                                     break;
                                 case 2:
-                                    System.out.println("Please enter the address of the branch you want to close: ");
+                                    System.out.println("Please enter the branch address of the branch you want to close: ");
                                     String address = input.nextLine();
 
                                     close_branch(address, true);
@@ -147,7 +144,7 @@ public class JDBCPart2{
                             
                         break;
                     case 3:
-                        System.out.println("You entered " + option);
+                        
                         System.out.println("Please enter the customer name: ");
                         String customerName = input.nextLine();
                         double balance = 0;
@@ -169,19 +166,18 @@ public class JDBCPart2{
 
                             switch(case3NestedOption){
                                 case 1:
-                                    System.out.println("Please enter the branch number of the branch you want to close: ");
+                                    System.out.println("Please enter the branch number of the account you want to close: ");
                                     String bnum = input.nextLine();
                                     // consumeNewLine = input.nextLine();
 
                                     if (isNum(bnum) && (bnum.length() < 4)){
-                                        System.out.println("(((((BOUT TO CALL FUNC)))))");
                                         setup_account(customerName, bnum, true, balance);
                                     }else{
                                         System.out.println("Something went wrong with your inputs pleasse try all over again!");
                                     }
                                     break;
                                 case 2:
-                                    System.out.println("Please enter the address of the branch you want to close: ");
+                                    System.out.println("Please enter the branch address of the account you want to close: ");
                                     String address = input.nextLine();
 
                                     setup_account(customerName, address, false, balance);
@@ -196,28 +192,99 @@ public class JDBCPart2{
                         }
                         break;
                     case 4:
-                        System.out.println("You entered " + option);
+                        
+                        System.out.println("Please enter the customer name: ");
+                        customerName = input.nextLine();
+
+                        int case4NestedOption = -1;
+
+                        System.out.println("Do you want to setup the customer account using a branch using (1) branch number ot (2) branch address?:");
+                        try{
+                            case4NestedOption = input.nextInt();
+                            consumeNewLine = input.nextLine();
+
+                            switch(case4NestedOption){
+                                case 1:
+                                    System.out.println("Please enter the branch number of the customer you want to setup: ");
+                                    String bnum = input.nextLine();
+                                    // consumeNewLine = input.nextLine();
+
+                                    if (isNum(bnum) && (bnum.length() < 4)){
+                                        setup_customer(customerName, bnum, true);
+                                    }else{
+                                        System.out.println("Something went wrong with your inputs pleasse try all over again!");
+                                    }
+                                    break;
+                                case 2:
+                                    System.out.println("Please enter the branch address of the customer you want to setup: ");
+                                    String address = input.nextLine();
+
+                                    setup_customer(customerName, address, false);
+                                    break;
+                                default:
+                                    System.out.println("Invalid option. Please select option (1) for branch number or (2) for branch address next time!");
+                            }
+                            
+
+                        }catch(Exception e){
+
+                        }
                         break;
                     case 5:
-                        System.out.println("You entered " + option);
+                        System.out.println("Please enter the customer name: ");
+                        customerName = input.nextLine();
+
+                        int case5NestedOption = -1;
+
+                        System.out.println("Do you want to setup the customer account using a branch using (1) branch number ot (2) branch address?:");
+                        try{
+                            case5NestedOption = input.nextInt();
+                            consumeNewLine = input.nextLine();
+
+                            switch(case5NestedOption){
+                                case 1:
+                                    System.out.println("Please enter the branch number of the accountyou want to close: ");
+                                    String bnum = input.nextLine();
+                                    // consumeNewLine = input.nextLine();
+
+                                    if (isNum(bnum) && (bnum.length() < 4)){
+                                        close_account(customerName, bnum, true);
+                                    }else{
+                                        System.out.println("Something went wrong with your inputs pleasse try all over again!");
+                                    }
+                                    break;
+                                case 2:
+                                    System.out.println("Please enter the branch address of the account you want to close: ");
+                                    String address = input.nextLine();
+
+                                    close_account(customerName, address, false);
+                                    break;
+                                default:
+                                    System.out.println("Invalid option. Please select option (1) for branch number or (2) for branch address next time!");
+                            }
+                            
+
+                        }catch(Exception e){
+
+                        }
                         break;
                     case 6:
-                        System.out.println("You entered " + option);
+                        
                         break;
                     case 7:
-                        System.out.println("You entered " + option);
+                        
                         break;
                     case 8:
-                        System.out.println("You entered " + option);
+                        
                         break;
                     case 9:
-                        System.out.println("You entered " + option);
+                        
                         break;
                     case 10:
-                        System.out.println("You entered " + option);
+                        
                         break;
                     case 11:
-                        System.out.println("You entered " + option);
+                        
                         break;
  
                     default:
@@ -437,7 +504,7 @@ public class JDBCPart2{
                     }
 
                     while (hasNext2) {
-                        String cnum = rs.getString("cnum");
+                        String cnum = rs2.getString("cnum");
 
                         if (cnum != null){
                             String new_anum = get_account_number(stmt, bnum);
@@ -455,13 +522,222 @@ public class JDBCPart2{
                                     status = 0;
                                     balance = 0;
                                 }
-                                stmt.executeUpdate("INSERT INTO customer values('"+ new_anum + "', '" + cnum + "', " + balance + ")");
+                                stmt.executeUpdate("INSERT INTO account values('"+ new_anum + "', '" + cnum + "', " + balance + ")");
                                 System.out.println("Account created");
                                 return;
                             }
                         }
                         hasNext2 = rs2.next();
                     }
+                }
+                hasNext = rs.next();
+            }
+
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	  }finally{
+        try{
+            if (stmt != null){
+                stmt.close();
+                System.out.println("Statement Closed!");
+            }
+            if (conn != null){
+                conn.commit();
+                conn.setAutoCommit(true);
+                System.out.println("Committed!");
+            }
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	    }
+      }
+        
+    }
+
+    public static void close_account(String customerName, String identifier, boolean closeByBnum){
+
+        Statement stmt = null;
+        try{
+            conn.setAutoCommit(false);
+            stmt = conn.createStatement();
+            ResultSet rs;
+
+            boolean customerExists  = false;
+            boolean branchExists = false;
+            
+    
+            if (closeByBnum){
+                switch (identifier.length()){
+                    case 1:
+                        identifier = "00" + identifier;
+                        break;
+                    case 2:
+                        identifier = "0" + identifier;
+                        break;
+                }
+            }
+            
+            
+            rs = stmt.executeQuery("SELECT bnum FROM branch WHERE bnum = '" + identifier + "' OR address = '" + identifier + "'");
+
+            boolean hasNext = rs.next();
+
+            if (!hasNext){
+                if (closeByBnum){
+                    System.out.println("The branch with the branch number: " + identifier + " does not exist!");
+                }else{
+                    System.out.println("The branch with the address: " + identifier + " does not exist!");
+                }
+            }
+
+            while (hasNext) {
+                String bnum = rs.getString("bnum");
+                if (bnum != null){
+                    branchExists = true;
+                    ResultSet rs2 = stmt.executeQuery("SELECT cnum, status FROM customer WHERE name = '" + customerName + "'");
+                    boolean hasNext2 = rs2.next();
+
+                    if (!hasNext2){
+                        System.out.println("Customer with name: " + customerName + " does not exist!");
+                        return;
+                    }
+
+                    while (hasNext2) {
+                        String cnum = rs2.getString("cnum");
+                        int status = rs2.getInt("status");
+
+                        if (cnum != null){
+
+                            if (status == 0){
+                                ResultSet rs3 = stmt.executeQuery("SELECT anum, balance FROM account WHERE cnum = '" + cnum + "' and anum LIKE '" + bnum +"%'");
+                                boolean hasNext3 = rs3.next();
+
+                                while(hasNext3){
+                                    String anum = rs3.getString("anum");
+                                    double balance = rs3.getInt("balance");
+
+                                    if (anum != null){
+                                        if (balance <= 0){
+                                            ResultSet rs4 = stmt.executeQuery("SELECT count(anum) as total FROM account WHERE cnum = '" + cnum + "'");
+                                            boolean hasNext4 = rs4.next();
+                                            int total = rs4.getInt("total");
+
+                                            while(hasNext4){
+                                                System.out.println("NUMMMMMMMMMMMMBERRRRRRRRRRRRRRRRRR OF " + total);
+                                                if (total < 2){
+                                                    stmt.executeUpdate("DELETE FROM account WHERE anum = '" + anum + "'");
+                                                    stmt.executeUpdate("INSERT INTO closedaccount values('"+ anum + "')");
+                                                    stmt.executeUpdate("DELETE FROM customer WHERE cnum = '" + cnum + "'");
+                                                    stmt.executeUpdate("INSERT INTO closedcustomer values('"+ cnum + "')");
+                                                }else{
+                                                    stmt.executeUpdate("DELETE FROM account WHERE anum = '" + anum + "'");
+                                                    stmt.executeUpdate("INSERT INTO closedaccount values('"+ anum + "')");
+                                                }
+                                                
+                                                System.out.println("Customer's account with name: " + customerName + " and branch: " + identifier + "has been closed");
+                                                hasNext4 = rs4.next();
+                                            }
+                                        }else{
+                                            System.out.println("Customer with name: " + customerName + " has a balance greather than $0");
+                                        }
+                                    }
+                                    hasNext3 = rs3.next();
+                                }
+                            }else{
+                                System.out.println("Customer with name: " + customerName + " has a balance greather than $0");
+                            }
+                        }else{
+                            System.out.println("The customer you provide does not exist!");
+                        }
+                        hasNext2 = rs2.next();
+                    }
+                }
+                hasNext = rs.next();
+            }
+
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	  }finally{
+        try{
+            if (stmt != null){
+                stmt.close();
+                System.out.println("Statement Closed!");
+            }
+            if (conn != null){
+                conn.commit();
+                conn.setAutoCommit(true);
+                System.out.println("Committed!");
+            }
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	    }
+      }
+        
+    }
+
+    public static void setup_customer(String customerName, String identifier, boolean setupByBnum){
+
+        Statement stmt = null;
+        try{
+            conn.setAutoCommit(false);
+            stmt = conn.createStatement();
+            ResultSet rs;
+
+            boolean customerExists  = false;
+            boolean branchExists = false;
+            
+    
+            if (setupByBnum){
+                switch (identifier.length()){
+                    case 1:
+                        identifier = "00" + identifier;
+                        break;
+                    case 2:
+                        identifier = "0" + identifier;
+                        break;
+                }
+            }
+            
+            
+            rs = stmt.executeQuery("SELECT bnum FROM branch WHERE bnum = '" + identifier + "' OR address = '" + identifier + "'");
+
+            boolean hasNext = rs.next();
+
+            if (!hasNext){
+                if (setupByBnum){
+                    System.out.println("The branch with the branch number: " + identifier + " does not exist!");
+                }else{
+                    System.out.println("The branch with the address: " + identifier + " does not exist!");
+                }
+                return;
+            }
+
+            while (hasNext) {
+                String bnum = rs.getString("bnum");
+                if (bnum != null){
+                    branchExists = true;
+                    ResultSet rs2 = stmt.executeQuery("SELECT cnum FROM customer WHERE name = '" + customerName + "'");
+                    boolean hasNext2 = rs2.next();
+
+                    if (hasNext2){
+                        System.out.println("Customer with name: " + customerName + " already exist!");
+                        return;
+                    }else{
+                        System.out.println("Customer with name: " + customerName + " DOES NOT EXITSSSSSSS OHHHHalready exist!");
+                        String cnum = get_customer_number(stmt);
+                        stmt.executeUpdate("INSERT INTO customer values('"+ cnum + "', '" + customerName + "', " + 0 + ")");
+                        setup_account(customerName, identifier, setupByBnum, 0);
+                        System.out.println("Customer with name: " + customerName + " was creadted successfully!");
+                    }
+
+                    
                 }
                 hasNext = rs.next();
             }
@@ -498,7 +774,7 @@ public class JDBCPart2{
             ResultSet rs;
             
             int next_bnum;
-            rs = stmt.executeQuery("SELECT anum FROM closedaccount");
+            rs = stmt.executeQuery("SELECT anum FROM closedaccount WHERE anum LIKE '" + bnum +"%'");
 
             while ( rs.next() ) {
                 String anum = rs.getString("anum");
@@ -506,8 +782,10 @@ public class JDBCPart2{
 
                 if (anum != null){
                     hasOldAnum = true;
-                    localNum = anum;
+                    // localNum = anum;
+                    System.out.println("UHAHAHHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAH " + anum);
                     stmt.executeUpdate("DELETE FROM closedaccount WHERE anum = '" + anum + "'");
+                    return anum;
                 }
             }
 
@@ -520,25 +798,26 @@ public class JDBCPart2{
                     hasOldAnum = true;
                     String anum = rs.getString("anum");
                     if (anum != null){
-                        int next_anum = Integer.parseInt(anum.substring(3,anum.length()));
+                        int highest_anum = Integer.parseInt(anum.substring(3,anum.length()));
 
-                        if (next_anum < 9999){
-                            next_anum += 1;
-                            String new_anum = String.valueOf(next_anum);
-
-                            switch (new_anum.length()){
+                        if (highest_anum < 9999){
+                            highest_anum += 1;
+                            String next_anum = String.valueOf(highest_anum);
+                            System.out.println("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY " + next_anum);
+                            switch (next_anum.length()){
                                 case 1:
-                                    new_anum = "000" + new_anum;
+                                    next_anum = "000" + next_anum;
                                     break;
                                 case 2:
-                                    new_anum = "00" + new_anum;
+                                    next_anum = "00" + next_anum;
                                     break;
                                 case 3:
-                                    new_anum = "0" + new_anum;
+                                    next_anum = "0" + next_anum;
                                     break;
                             }
+                            System.out.println("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO " + next_anum);
 
-                            localNum = anum;
+                            localNum = next_anum;
                         }
                     }else{
                         localNum = "0000";
@@ -549,13 +828,77 @@ public class JDBCPart2{
         }catch(Exception e){
 
         }
-
+        System.out.println("???????????????????????????????????? " + bnum + localNum);
         if (localNum != null){
             return (bnum + localNum);
         }
-        return null;
+        return localNum;
     }
 
+    public static String get_customer_number(Statement stmt){
+        
+        String returnValue = null;
+        try{
+            boolean hasOldAnum = false;
+            ResultSet rs;
+            
+            int next_bnum;
+            rs = stmt.executeQuery("SELECT cnum FROM closedcustomer");
 
+            while ( rs.next() ) {
+                String cnum = rs.getString("cnum");
+                System.out.println(cnum);
+
+                if (cnum != null){
+                    hasOldAnum = true;
+                    returnValue = cnum;
+                    stmt.executeUpdate("DELETE FROM closedcustomer WHERE cnum = '" + cnum + "'");
+                }
+            }
+
+            if (!hasOldAnum){
+                rs = stmt.executeQuery("SELECT MAX(cnum) as cnum FROM customer");
+                hasOldAnum = false;
+
+                while ( rs.next() ) {
+
+                    hasOldAnum = true;
+                    String cnum = rs.getString("cnum");
+                    if (cnum != null){
+                        int highest_cnum = Integer.parseInt(cnum);
+
+                        if (highest_cnum < 99999){
+                            highest_cnum += 1;
+                            String next_cnum = String.valueOf(highest_cnum);
+
+                            switch (next_cnum.length()){
+                                case 1:
+                                    next_cnum = "0000" + next_cnum;
+                                    break;
+                                case 2:
+                                    next_cnum = "000" + next_cnum;
+                                    break;
+                                case 3:
+                                    next_cnum = "00" + next_cnum;
+                                    break;
+                                case 4:
+                                    next_cnum = "0" + next_cnum;
+                                    break;
+                            }
+
+                            returnValue = next_cnum;
+                        }
+                    }else{
+                        returnValue = "00000";
+                    }
+                }
+            }
+            
+        }catch(Exception e){
+
+        }
+
+        return returnValue;
+    }
 
 }
