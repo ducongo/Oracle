@@ -617,7 +617,7 @@ public class JDBCPart2{
 
                                 while(hasNext3){
                                     String anum = rs3.getString("anum");
-                                    double balance = rs3.getInt("balance");
+                                    double balance = rs3.getDouble("balance");
 
                                     if (anum != null){
                                         if (balance <= 0){
@@ -678,8 +678,275 @@ public class JDBCPart2{
             e.printStackTrace();
             System.exit(-1);
 	    }
+      }   
+    }
+
+    public static double withdraw(String customerName, String anum, double amount){
+        Statement stmt = null;
+        try{
+            conn.setAutoCommit(false);
+            stmt = conn.createStatement();
+            ResultSet rs;
+
+            rs = stmt.executeQuery("SELECT cnum from account WHERE anum = '" + anum + "'");
+
+            boolean hasNext = rs.next();
+
+            if (!hasNext){
+                System.out.println("The account with the account number: " + anum + " does not exist!");
+                return 0;
+            }else{
+                ResultSet rs2 = stmt.executeQuery("SELECT balance from account WHERE anum = '" + anum + "'");
+                boolean hasNext2 = rs2.next();
+
+                while (hasNext2){
+                    double balance = rs2.getDouble("balance");
+
+
+                    if ((balance - amount) < 0){
+                        System.out.println("Insufficient funds!");
+                        return 0;
+                    }else{
+                        balance = balance - amount;
+                    }
+
+                    stmt.executeUpdate("UPDATE account " + "SET balance = " + balance + " WHERE anum = '" + anum + "'");
+                    ResultSet rs3 = stmt.executeQuery("SELECT SUM(balance) as total from account WHERE cnum = (select cnum from customer where name = '" +customerName+"')");
+                    boolean hasNext3 = rs3.next();
+
+                    while (hasNext3){
+                        double total_balance = rs3.getDouble("total");
+                        int status = 0;
+                        if (total_balance >= 2000){
+                            status = 3;
+                        }else if(total_balance >= 1000){
+                            status = 2;
+                        }else if(total_balance > 0){
+                            status = 1;
+                        }else{
+                            status = 0;
+                        }
+
+                        stmt.executeUpdate("UPDATE customer " + "SET status = " + status + " WHERE name = '" + customerName + "'");
+                        return balance;
+                        
+                    }
+
+                    hasNext2 = rs2.next();
+                }
+            }
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	  }finally{
+        try{
+            if (stmt != null){
+                stmt.close();
+                System.out.println("Statement Closed!");
+            }
+            if (conn != null){
+                conn.commit();
+                conn.setAutoCommit(true);
+                System.out.println("Committed!");
+            }
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	    }
       }
-        
+      return 0;
+    }
+
+    public static double deposit(String customerName, String anum, double amount){
+        Statement stmt = null;
+        try{
+            conn.setAutoCommit(false);
+            stmt = conn.createStatement();
+            ResultSet rs;
+
+            rs = stmt.executeQuery("SELECT cnum from account WHERE anum = '" + anum + "'");
+
+            boolean hasNext = rs.next();
+
+            if (!hasNext){
+                System.out.println("The account with the account number: " + anum + " does not exist!");
+                return 0;
+            }else{
+                ResultSet rs2 = stmt.executeQuery("SELECT balance from account WHERE anum = '" + anum + "'");
+                boolean hasNext2 = rs2.next();
+
+                while (hasNext2){
+                    double balance = rs2.getDouble("balance");
+
+                    balance += amount;
+
+                    stmt.executeUpdate("UPDATE account " + "SET balance = " + balance + " WHERE anum = '" + anum + "'");
+                    ResultSet rs3 = stmt.executeQuery("SELECT SUM(balance) as total from account WHERE cnum = (select cnum from customer where name = '" +customerName+"')");
+                    boolean hasNext3 = rs3.next();
+
+                    while (hasNext3){
+                        double total_balance = rs3.getDouble("total");
+                        int status = 0;
+                        if (total_balance >= 2000){
+                            status = 3;
+                        }else if(total_balance >= 1000){
+                            status = 2;
+                        }else if(total_balance > 0){
+                            status = 1;
+                        }else{
+                            status = 0;
+                        }
+
+                        stmt.executeUpdate("UPDATE customer " + "SET status = " + status + " WHERE name = '" + customerName + "'");
+                        return balance;
+                        
+                    }
+
+                    hasNext2 = rs2.next();
+                }
+            }
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	  }finally{
+        try{
+            if (stmt != null){
+                stmt.close();
+                System.out.println("Statement Closed!");
+            }
+            if (conn != null){
+                conn.commit();
+                conn.setAutoCommit(true);
+                System.out.println("Committed!");
+            }
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	    }
+      }
+      return 0;
+    }
+
+    public static void transfer(String customerName, String anum1, String anum2, double amount){
+        Statement stmt = null;
+        try{
+            conn.setAutoCommit(false);
+            stmt = conn.createStatement();
+            ResultSet rs;
+
+            double balance;
+
+            rs = stmt.executeQuery("SELECT cnum from account WHERE anum = '" + anum1 + "' or anum = '" + anum2 + "'");
+
+            boolean hasNextAnum1 = rs.next();
+            boolean hasNextAnum2 = rs.next();
+
+            if (!(hasNextAnum1 && hasNextAnum2)){
+
+                if (hasNextAnum1){
+                    System.out.println("The account with the account number: " + anum2 + " does not exist!");
+                }else if (hasNextAnum2){
+                    System.out.println("The account with the account number: " + anum2 + " does not exist!");
+                }else{
+                    System.out.println("The accounts with the account number: " + anum1 + " and " + anum2 + " do not exist!");
+                }
+                
+            }else{
+                ResultSet rs2 = stmt.executeQuery("SELECT balance from account WHERE anum = '" + anum1 + "'");
+                boolean hasNext2 = rs2.next();
+
+                while (hasNext2){
+                    balance = rs2.getDouble("balance");
+
+
+                    if ((balance - amount) < 0){
+                        System.out.println("Insufficient funds! for account with the account number" + anum1);
+                        return;
+                    }else{
+                        balance = balance - amount;
+                    }
+
+                    stmt.executeUpdate("UPDATE account " + "SET balance = " + balance + " WHERE anum = '" + anum1 + "'");
+                    ResultSet rs3 = stmt.executeQuery("SELECT SUM(balance) as total from account WHERE cnum = (select cnum from customer where name = '" +customerName+"')");
+                    boolean hasNext3 = rs3.next();
+
+                    while (hasNext3){
+                        double total_balance = rs3.getDouble("total");
+                        int status = 0;
+                        if (total_balance >= 2000){
+                            status = 3;
+                        }else if(total_balance >= 1000){
+                            status = 2;
+                        }else if(total_balance > 0){
+                            status = 1;
+                        }else{
+                            status = 0;
+                        }
+
+                        stmt.executeUpdate("UPDATE customer " + "SET status = " + status + " WHERE name = '" + customerName + "'");
+                        hasNext3 = rs3.next();
+                    }
+
+                    ResultSet rs4 = stmt.executeQuery("SELECT balance, cnum from account WHERE anum = '" + anum2 + "'");
+                    boolean hasNext4 = rs4.next();
+
+                    while (hasNext4){
+                        double balance2 = rs4.getDouble("balance");
+                        String cnum = rs4.getString("cnum");
+                        
+                        stmt.executeUpdate("UPDATE account " + "SET balance = " + amount + " WHERE anum = '" + anum2 + "'");
+                        ResultSet rs5 = stmt.executeQuery("SELECT SUM(balance) as total from account WHERE cnum = '" + cnum +"')");
+                        boolean hasNext5 = rs5.next();
+
+                        while (hasNext5){
+                            double total_balance2 = rs5.getDouble("total");
+                            int status2 = 0;
+                            if (total_balance2 >= 2000){
+                                status2 = 3;
+                            }else if(total_balance2 >= 1000){
+                                status2 = 2;
+                            }else if(total_balance2 > 0){
+                                status2 = 1;
+                            }else{
+                                status2 = 0;
+                            }
+
+                            stmt.executeUpdate("UPDATE customer " + "SET status = " + status2 + " WHERE cnum = '" + cnum + "'");
+                            hasNext5 = rs5.next();
+                        }
+                        hasNext4 = rs4.next();
+                    }
+
+                    hasNext2 = rs2.next();
+                }
+                System.out.print("Succesfully tranferred money!");
+            }
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	  }finally{
+        try{
+            if (stmt != null){
+                stmt.close();
+                System.out.println("Statement Closed!");
+            }
+            if (conn != null){
+                conn.commit();
+                conn.setAutoCommit(true);
+                System.out.println("Committed!");
+            }
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	    }
+      }
+
     }
 
     public static void setup_customer(String customerName, String identifier, boolean setupByBnum){
@@ -766,6 +1033,134 @@ public class JDBCPart2{
         
     }
 
+    public void show_all_branches(){
+        Statement stmt = null;
+        try{
+            conn.setAutoCommit(false);
+            stmt = conn.createStatement();
+            ResultSet rs;
+
+            rs = stmt.executeQuery("SELECT bnum FROM branch");
+
+            String bnum;
+
+            while (rs.next()){
+                bnum = rs.getString("bnum");
+
+                if (bnum != null){
+                    show_branch(bnum, true, true);
+                }
+            }            
+
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	  }finally{
+        try{
+            if (stmt != null){
+                stmt.close();
+                System.out.println("Statement Closed!");
+            }
+            if (conn != null){
+                conn.commit();
+                conn.setAutoCommit(true);
+                System.out.println("Committed!");
+            }
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	    }
+      }
+    }
+
+    public void show_branch(String identifier, boolean getByBnum, boolean showAllBranch){
+        Statement stmt = null;
+        try{
+            conn.setAutoCommit(false);
+            stmt = conn.createStatement();
+            ResultSet rs;
+
+            boolean customerExists  = false;
+            boolean branchExists = false;
+            
+    
+            if (getByBnum){
+                switch (identifier.length()){
+                    case 1:
+                        identifier = "00" + identifier;
+                        break;
+                    case 2:
+                        identifier = "0" + identifier;
+                        break;
+                }
+            }
+            
+            if (!showAllBranch){
+                rs = stmt.executeQuery("SELECT cnum, anum, balance FROM account WHERE anum LIKE '" + bnum +"%'");
+
+                boolean hasNext = rs.next();
+                double totalBalanace = 0;
+
+                if (!hasNext){
+                    if (!getByBnum){
+                        System.out.println("The branch with the branch number: " + identifier + " does not exist!");
+                    }else{
+                        System.out.println("The branch with the address: " + identifier + " does not exist!");
+                    }
+                    return;
+                }
+            }
+            
+
+            
+            double total_balance;
+            double balance;
+            String cnum;
+            String anum;
+
+            System.out.println("cnum     anum      balance");
+            System.out.println("----------------------------------------");
+            while (hasNext) {
+                balance = rs3.getDouble("balance");
+                anum = rs3.getString("anum");
+                cnum = rs3.getString("cnum");
+                
+                if (cnum != null){
+                    total_balance += balance;
+                    System.out.println(cnum + "   " + anum + "   " + balance);
+                }
+                
+                hasNext = rs.next();
+            }
+
+            System.out.println("total balance     " + total_balance);
+            System.out.println("----------------------------------------");
+
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	  }finally{
+        try{
+            if (stmt != null){
+                stmt.close();
+                System.out.println("Statement Closed!");
+            }
+            if (conn != null){
+                conn.commit();
+                conn.setAutoCommit(true);
+                System.out.println("Committed!");
+            }
+        }catch(Exception e){
+            System.out.println("SQL exception: ");
+            e.printStackTrace();
+            System.exit(-1);
+	    }
+      }
+    }
+
     public static String get_account_number(Statement stmt, String bnum){
         
         String localNum = null;
@@ -834,6 +1229,8 @@ public class JDBCPart2{
         }
         return localNum;
     }
+
+    
 
     public static String get_customer_number(Statement stmt){
         
