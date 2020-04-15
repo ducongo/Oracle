@@ -1,2 +1,2 @@
 # Oracle
-Small oracle applications
+Small oracle applications using JDBC
